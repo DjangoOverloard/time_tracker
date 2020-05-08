@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'mainPage.dart';
-
+var curObj;
 class ProjectWid extends StatefulWidget {
   final index;
   final doc;
@@ -102,11 +102,11 @@ class _ProjectWidState extends State<ProjectWid> {
                       children: <Widget>[
                         GestureDetector(
                           onTap: (){
+                            curObj = obj;
                             showDialog(context: context, builder: (context)=> AreYourSure(
                               update: (){
                                 widget.update();
                               },
-                              obj: obj,
                             ));
                           },
                                             child: Container(
@@ -246,10 +246,9 @@ class _ProjectWidState extends State<ProjectWid> {
 
 
 class AreYourSure extends StatefulWidget {
-  final obj;
   final update;
 
-  const AreYourSure({Key key, this.obj, this.update}) : super(key: key);
+  const AreYourSure({Key key, this.update}) : super(key: key);
   @override
   _AreYourSureState createState() => _AreYourSureState();
 }
@@ -261,9 +260,9 @@ class _AreYourSureState extends State<AreYourSure> {
     sent = false;
     setState((){});
     await Firestore.instance.collection('users').document(userDoc.documentID).updateData({
-      'projects': FieldValue.arrayRemove([jsonEncode(widget.obj)])
+      'projects': FieldValue.arrayRemove([jsonEncode(curObj)])
     });
-    projects.removeWhere((d)=>d['timeCreated'] == widget.obj['timeCreated']);
+    projects.removeWhere((d)=>d['timeCreated'] == curObj['timeCreated']);
     widget.update();
     sent = true;
     setState((){});
@@ -289,7 +288,7 @@ class _AreYourSureState extends State<AreYourSure> {
                           child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Text('Are you sure you want to delete ${widget.obj['name']}?', style: TextStyle(
+                    Text('Are you sure you want to delete ${curObj['name']}?', style: TextStyle(
                       color: Colors.black, fontSize: 18, 
                     ), textAlign: TextAlign.center,),
                     Row(
@@ -334,7 +333,7 @@ class _AreYourSureState extends State<AreYourSure> {
                           child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Text('${widget.obj['name']} has been deleted', style: TextStyle(
+                    Text('${curObj['name']} has been deleted', style: TextStyle(
                       color: Colors.black, fontSize: 18
                     ), textAlign: TextAlign.center,),
                     GestureDetector(
