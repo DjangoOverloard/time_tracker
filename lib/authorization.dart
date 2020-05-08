@@ -88,224 +88,227 @@ class _AuthorizationState extends State<Authorization> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: EdgeInsets.only(left: 5, right: 5),
-                          child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text('Project Manager Tool', style: TextStyle(
-                        color: Colors.teal, fontSize: 18, 
-                      )),
-                      Icon(Icons.timelapse, color: Colors.teal,size: 100),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                                      child: Container(
-                      height: 45,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.white, 
-                        border: Border.all(
-                          color: Colors.black26, 
-                          width: 1.5
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 5, right: 5),
-                        child: TextField(
-                          autofocus: false,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: (val){
-                            FocusScope.of(context).unfocus();
-                          },
-                          onChanged: (val){
-                            email = val.trim().toLowerCase();
-                            if(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
-                              if(!atIsPresent){
-                              atIsPresent = true;
-                              setState((){});
-                              }
-                            }else{
-                              if(atIsPresent){
-                                atIsPresent = false;
-                                setState((){});
-                              }
-                            }
-                            if(debounceTimer!=null){
-                              debounceTimer.cancel();
-                            }
-                            debounceTimer = new Timer(Duration(milliseconds: 300), (){
-                              setState((){});
-                            });
-                          },
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Email Address'
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: GestureDetector(
-                      onTap: (){
-                        if(atIsPresent && email.length>1){
-                       check();
-                        }
-                      },
-                                          child: Container(
-                        height: 45,
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(
-                          color: Colors.teal.withOpacity(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)?1.0:0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(
-                          child: Text('Enter', style: TextStyle(
-                            color: Colors.white,
-                          )),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          showBar?GestureDetector(
-            onTap: (){
-              showBar = false;
-              setState((){});
-            },
-                      child: Container(
-              color: Colors.black26,
-            ),
-          ):SizedBox.shrink(),
-          AnimatedPositioned(
-            left: 0,right: 0, 
-            bottom: showBar?0:-200,
-            duration: Duration(milliseconds: 200),
-            child: Container(
-              height: 200, 
-              width: double.maxFinite,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(5),
-                topRight: Radius.circular(5)),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26, 
-                    offset: Offset(0.0, -1.0),
-                    blurRadius: 3,
-                  ),
-                ],
-              ),
-              child: AnimatedSwitcher(duration:Duration(milliseconds: 300), 
-              child:userLoaded?Padding(
-                padding: EdgeInsets.only(left: 5, right: 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return WillPopScope(
+      onWillPop: (){},
+          child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: EdgeInsets.only(left: 5, right: 5),
+                            child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(!reged?'Welcome, $email':"We're glad to see you again, $email", style: TextStyle(
-                      color: Colors.black, fontSize: 18,
-                    ), textAlign: TextAlign.center,), 
-                    showError?Text('Password is incorrect', style: TextStyle(
-                      color: Colors.red,fontSize: 18, 
-                    )):SizedBox.shrink(),
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-Container(
-                      height: 45,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.white, 
-                        border: Border.all(
-                          color: Colors.black26, 
-                          width: 1.5
+                        Text('Project Manager Tool', style: TextStyle(
+                          color: Colors.teal, fontSize: 18, 
+                        )),
+                        Icon(Icons.timelapse, color: Colors.teal,size: 100),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                                        child: Container(
+                        height: 45,
+                        width: double.maxFinite,
+                        decoration: BoxDecoration(
+                          color: Colors.white, 
+                          border: Border.all(
+                            color: Colors.black26, 
+                            width: 1.5
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 5, right: 5),
-                        child: TextField(
-                          autofocus: true,
-                          onSubmitted: (val){},
-                          onChanged: (val){
-                            password = val.trim();
-                            if(password.length == 5 || password.length == 6){
-                              setState((){});
-                            }
-                          },
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.done,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Password'
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          child: TextField(
+                            autofocus: false,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (val){
+                              FocusScope.of(context).unfocus();
+                            },
+                            onChanged: (val){
+                              email = val.trim().toLowerCase();
+                              if(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
+                                if(!atIsPresent){
+                                atIsPresent = true;
+                                setState((){});
+                                }
+                              }else{
+                                if(atIsPresent){
+                                  atIsPresent = false;
+                                  setState((){});
+                                }
+                              }
+                              if(debounceTimer!=null){
+                                debounceTimer.cancel();
+                              }
+                              debounceTimer = new Timer(Duration(milliseconds: 300), (){
+                                setState((){});
+                              });
+                            },
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Email Address'
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 5),
-                    child: GestureDetector(
-                      onTap: (){
-                        if(password.length>=6){
-                        logIn();
-                        }
-                        if(debounceTimer!=null){
-                          debounceTimer.cancel();
-                        }
-                        debounceTimer = new Timer(Duration(milliseconds: 300), (){
-                          if(mounted){
-                          setState((){});
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: GestureDetector(
+                        onTap: (){
+                          if(atIsPresent && email.length>1){
+                         check();
                           }
-                        });
-                      },
-                                          child: Opacity(
-                                            opacity: password.length>=6?1.0:0.3,
-                                                                                      child: Container(
-                        height: 45,
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(
-                          child: Text('Authenticate', style: TextStyle(
-                            color: Colors.white,
-                          )),
+                        },
+                                            child: Container(
+                          height: 45,
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                            color: Colors.teal.withOpacity(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)?1.0:0.3),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text('Enter', style: TextStyle(
+                              color: Colors.white,
+                            )),
+                          ),
                         ),
                       ),
-                                          ),
-                    ),
-                  ),
-                      ],
                     ),
                   ],
                 ),
-              ):Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.teal)
-                ),
-              ) ),
+              ),
             ),
-          ),
-        ],
+            showBar?GestureDetector(
+              onTap: (){
+                showBar = false;
+                setState((){});
+              },
+                        child: Container(
+                color: Colors.black26,
+              ),
+            ):SizedBox.shrink(),
+            AnimatedPositioned(
+              left: 0,right: 0, 
+              bottom: showBar?0:-200,
+              duration: Duration(milliseconds: 200),
+              child: Container(
+                height: 200, 
+                width: double.maxFinite,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(5),
+                  topRight: Radius.circular(5)),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26, 
+                      offset: Offset(0.0, -1.0),
+                      blurRadius: 3,
+                    ),
+                  ],
+                ),
+                child: AnimatedSwitcher(duration:Duration(milliseconds: 300), 
+                child:userLoaded?Padding(
+                  padding: EdgeInsets.only(left: 5, right: 10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text(!reged?'Welcome, $email':"We're glad to see you again, $email", style: TextStyle(
+                        color: Colors.black, fontSize: 18,
+                      ), textAlign: TextAlign.center,), 
+                      showError?Text('Password is incorrect', style: TextStyle(
+                        color: Colors.red,fontSize: 18, 
+                      )):SizedBox.shrink(),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+Container(
+                        height: 45,
+                        width: double.maxFinite,
+                        decoration: BoxDecoration(
+                          color: Colors.white, 
+                          border: Border.all(
+                            color: Colors.black26, 
+                            width: 1.5
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          child: TextField(
+                            autofocus: true,
+                            onSubmitted: (val){},
+                            onChanged: (val){
+                              password = val.trim();
+                              if(password.length == 5 || password.length == 6){
+                                setState((){});
+                              }
+                            },
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.done,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Password'
+                            ),
+                          ),
+                        ),
+                      ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: GestureDetector(
+                        onTap: (){
+                          if(password.length>=6){
+                          logIn();
+                          }
+                          if(debounceTimer!=null){
+                            debounceTimer.cancel();
+                          }
+                          debounceTimer = new Timer(Duration(milliseconds: 300), (){
+                            if(mounted){
+                            setState((){});
+                            }
+                          });
+                        },
+                                            child: Opacity(
+                                              opacity: password.length>=6?1.0:0.3,
+                                                                                        child: Container(
+                          height: 45,
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text('Authenticate', style: TextStyle(
+                              color: Colors.white,
+                            )),
+                          ),
+                        ),
+                                            ),
+                      ),
+                    ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ):Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(Colors.teal)
+                  ),
+                ) ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
