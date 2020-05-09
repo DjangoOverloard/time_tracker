@@ -82,6 +82,7 @@ class _AuthorizationState extends State<Authorization> {
 
 @override
   void initState() {
+    print('initialization');
     anonymous();
     super.initState();
   }

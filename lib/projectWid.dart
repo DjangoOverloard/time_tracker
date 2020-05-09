@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'mainPage.dart';
-var curObj;
 class ProjectWid extends StatefulWidget {
   final index;
   final doc;
@@ -102,8 +101,9 @@ class _ProjectWidState extends State<ProjectWid> {
                       children: <Widget>[
                         GestureDetector(
                           onTap: (){
-                            curObj = obj;
                             showDialog(context: context, builder: (context)=> AreYourSure(
+                              asDoc: userDoc.data['projects'].where((d)=>jsonDecode(d)['timeCreated']
+                               == obj['timeCreated']).toList().first,
                               update: (){
                                 widget.update();
                               },
@@ -247,8 +247,9 @@ class _ProjectWidState extends State<ProjectWid> {
 
 class AreYourSure extends StatefulWidget {
   final update;
+  final asDoc;
 
-  const AreYourSure({Key key, this.update}) : super(key: key);
+  const AreYourSure({Key key, this.update, this.asDoc}) : super(key: key);
   @override
   _AreYourSureState createState() => _AreYourSureState();
 }
@@ -260,15 +261,16 @@ class _AreYourSureState extends State<AreYourSure> {
     sent = false;
     setState((){});
     await Firestore.instance.collection('users').document(userDoc.documentID).updateData({
-      'projects': FieldValue.arrayRemove([jsonEncode(curObj)])
+      'projects': FieldValue.arrayRemove([widget.asDoc])
     });
-    projects.removeWhere((d)=>d['timeCreated'] == curObj['timeCreated']);
+    projects.removeWhere((d)=>d['timeCreated'] == jsonDecode(widget.asDoc)['timeCreated']);
     widget.update();
     sent = true;
     setState((){});
   }
   @override
   Widget build(BuildContext context) {
+    final curObj = jsonDecode(widget.asDoc);
     return Scaffold(
       backgroundColor: Colors.black26,
           body: Center(

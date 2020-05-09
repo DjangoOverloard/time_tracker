@@ -245,58 +245,58 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        body: curPage == 0? ready?projects.length!=0 || adding?ListView.builder(
-          padding: EdgeInsets.only(bottom: 100),
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          itemCount: projects.length + (adding?1:0),
-          itemBuilder: (context ,i){
-            var index = i;
-            if(index == 0 && adding){
-             return Padding(
-              padding: EdgeInsets.only(left: 10, right: 10, top: index==0?10:0, bottom: 10),
-                        child: ProjectWid(
-                          update: (){
-                            if(mounted){
-                              setState((){});
-                            }
-                          },
-                          index: index,
-                          cancel: (){
-                            adding = false;
-                            setState((){});
-                          },
-                doc: null,
+        body: curPage == 0? Column(
+          children: <Widget>[
+            adding?Padding(
+              padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+              child: ProjectWid(
+                update: (){
+                  if(mounted){
+                    setState((){});
+                  }
+                },
+                cancel: (){
+                  adding = false;
+                  setState((){});
+                },
               ),
-            );
-            }else{
-              if(adding){index = index - 1;}
-              return Padding(
-              padding: EdgeInsets.only(left: 10, right: 10, top: index==0?10:0, bottom: 10),
-                        child: ProjectWid(
-                          update: (){
-                            if(mounted){
-                              setState((){});
-                            }
-                          },
-                          index: index,
-                          cancel: (){
-                            adding = false;
-                            setState((){});
-                          },
-                doc: index<projects.length?projects[index]:null,
+            ):SizedBox.shrink(),
+            Expanded(
+                          child: ready?projects.length!=0 || adding?ListView.builder(
+                padding: EdgeInsets.only(bottom: 100),
+                shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                itemCount: projects.length ,
+                itemBuilder: (context ,index){
+                    return Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10, top: index==0?!adding?10:0:0, bottom: 10),
+                              child: ProjectWid(
+                                update: (){
+                                  if(mounted){
+                                    setState((){});
+                                  }
+                                },
+                                index: index,
+                                cancel: (){
+                                  adding = false;
+                                  setState((){});
+                                },
+                      doc: index<projects.length?projects[index]:null,
+                    ),
+                  );
+                  
+                },
+              ):Center(
+                child: Text("You don't have any projects yet", style: TextStyle(
+                  color: Colors.black, fontSize: 18, 
+                )),
+              ):Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.teal)
+                ),
               ),
-            );
-            }
-          },
-        ):Center(
-          child: Text("You don't have any projects yet", style: TextStyle(
-            color: Colors.black, fontSize: 18, 
-          )),
-        ):Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Colors.teal)
-          ),
+            ),
+          ],
         ):Center(
           child: Center(
             child: Text('Created by Zhangir Siranov,\naka starlord.', style: TextStyle(
