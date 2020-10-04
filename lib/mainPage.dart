@@ -8,6 +8,7 @@ import 'package:project_time_tracker/authorization.dart';
 import 'package:project_time_tracker/projectWid.dart';
 
 DocumentSnapshot userDoc;
+  GlobalKey<ScaffoldState> scaff = new GlobalKey<ScaffoldState>();
 
   var projects = [];
 class HomePage extends StatefulWidget {
@@ -17,7 +18,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var curPage = 0;
-  GlobalKey<ScaffoldState> scaff = new GlobalKey<ScaffoldState>();
   bool loading = true;
   bool adding = false;
   StreamSubscription sub;
@@ -35,10 +35,9 @@ class _HomePageState extends State<HomePage> {
       data.documents.first.data['projects'].forEach((d){
         var encode = jsonDecode(d);
         if(projects.indexWhere((b)=>b['timeCreated'] == encode['timeCreated']) == -1){
-        projects.add(encode);
+        projects.insert(0,encode);
         }
       });
-      projects.sort((a, b)=>b['timeCreated'].compareTo(a['timeCreated']));
       if(mounted){
         setState((){});
       }
@@ -47,6 +46,7 @@ class _HomePageState extends State<HomePage> {
         setState((){});
       }
     });
+      projects.sort((a, b)=>b['timeCreated'].compareTo(a['timeCreated']));
   }
 
 
@@ -267,7 +267,7 @@ class _HomePageState extends State<HomePage> {
                 shrinkWrap: true,
                 physics: BouncingScrollPhysics(),
                 itemCount: projects.length ,
-                itemBuilder: (context ,index){
+                itemBuilder: (contexto ,index){
                     return Padding(
                     padding: EdgeInsets.only(left: 10, right: 10, top: index==0?!adding?10:0:0, bottom: 10),
                               child: ProjectWid(

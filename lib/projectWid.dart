@@ -10,8 +10,9 @@ class ProjectWid extends StatefulWidget {
   final doc;
   final update;
   final VoidCallback cancel;
+  final context;
 
-  const ProjectWid({Key key, this.doc, this.cancel, this.index, this.update}) : super(key: key);
+  const ProjectWid({Key key, this.doc, this.cancel, this.index, this.update, this.context}) : super(key: key);
   @override
   _ProjectWidState createState() => _ProjectWidState();
 }
@@ -49,6 +50,7 @@ class _ProjectWidState extends State<ProjectWid> {
     'projects': FieldValue.arrayUnion([sendingString])
   });
   sendingProject = false;
+  showSnack("""You've just created "$projectName"!""", true, context);
   }
   @override
   void initState() {
@@ -144,6 +146,7 @@ class _ProjectWidState extends State<ProjectWid> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: TimerWid(
+                  update: widget.update,
                   index: widget.index,
                   changeRun: (){},
                   running: obj['running'],
@@ -265,6 +268,7 @@ class _AreYourSureState extends State<AreYourSure> {
     });
     projects.removeWhere((d)=>d['timeCreated'] == jsonDecode(widget.asDoc)['timeCreated']);
     widget.update();
+    scaff.currentState.removeCurrentSnackBar();
     sent = true;
     setState((){});
   }
@@ -366,6 +370,13 @@ class _AreYourSureState extends State<AreYourSure> {
     );
   }
 }
+showSnack(text, positive, context){
+    scaff.currentState.hideCurrentSnackBar();
+    scaff.currentState.showSnackBar(SnackBar(
+      backgroundColor: positive?Colors.green:Colors.red,
+      content: Text(text, style: TextStyle(color: Colors.white, fontSize: 18)),
+    ));
+  }
 
 secondsToElapsedHours(inp){
   int start = inp;
@@ -385,8 +396,9 @@ class TimerWid extends StatefulWidget {
   final startTime;
   final changeRun;
   final index;
+  final update;
 
-  const TimerWid({Key key, this.running, this.startTime, this.changeRun, this.index}) : super(key: key);
+  const TimerWid({Key key, this.running, this.startTime, this.changeRun, this.index, this.update}) : super(key: key);
   @override
   _TimerWidState createState() => _TimerWidState();
 }
@@ -413,31 +425,59 @@ class _TimerWidState extends State<TimerWid> {
         loop();
       }
   }
+
+  
+
   start()async{
     startTime = (DateTime.now().millisecondsSinceEpoch/1000).round();
     running = true;
     setState((){});
+    widget.update();
+    showSnack("""You're now tracking the time of "${projects[widget.index]['name']}". Get to work!""", false, context);
     loop();
     projects[widget.index]['running'] = true;
     projects[widget.index]['lastActive'] = startTime;
-    var allProjects = []; allProjects.addAll(userDoc.data['projects']);
-    allProjects[widget.index] =  jsonEncode(projects[widget.index]);
-    await Firestore.instance.collection('users').document(userDoc.documentID).updateData({
-      'projects': allProjects,
+    var ref = Firestore.instance.collection('users').document(userDoc.documentID);
+    await Firestore.instance.runTransaction((transaction){
+      return transaction.get(ref).then((doc){
+        if(!doc.exists){
+          print('no doc in existence');
+        }else{
+          var docjsons = doc.data['projects'].map((d)=>jsonDecode(d)).toList();
+          print(docjsons);
+          final index = docjsons.indexWhere((d)=>d['timeCreated'] == projects[widget.index]['timeCreated']);
+          docjsons[index]['running'] = true;
+          docjsons[index]['lastActive'] = startTime;
+          docjsons = docjsons.map((d)=>jsonEncode(d)).toList();
+          transaction.update(ref, {'projects': docjsons});
+        }
+      });
     });
+    
   }
   stop()async{
-    final difference = (DateTime.now().millisecondsSinceEpoch/1000).round() - startTime;
-    running = false;
-    startTime = (DateTime.now().millisecondsSinceEpoch/1000).round();
-    setState((){});
-    projects[widget.index]['allTime'] = projects[widget.index]['allTime'] + difference;
-    projects[widget.index]['lastActive'] = startTime;
     projects[widget.index]['running'] = false;
-     var allProjects = []; allProjects.addAll(userDoc.data['projects']);
-     allProjects[widget.index] =  jsonEncode(projects[widget.index]);
-     await Firestore.instance.collection('users').document(userDoc.documentID).updateData({
-      'projects': allProjects,
+    final difference = (DateTime.now().millisecondsSinceEpoch/1000).round() - projects[widget.index]['lastActive'];
+    projects[widget.index]['allTime'] = projects[widget.index]['allTime'] + difference;
+    print(difference);
+    showSnack("""You've just added $difference seconds of work to "${projects[widget.index]['name']}". Great job!""", true, context);
+    running = false;
+    widget.update();
+    setState((){});
+    var ref = Firestore.instance.collection('users').document(userDoc.documentID);
+    await Firestore.instance.runTransaction((transaction){
+      return transaction.get(ref).then((doc){
+        if(!doc.exists){
+          print('no doc in existence');
+        }else{
+          var docjsons = doc.data['projects'].map((d)=>jsonDecode(d)).toList();
+          final index = docjsons.indexWhere((d)=>d['timeCreated'] == projects[widget.index]['timeCreated']);
+          docjsons[index]['running'] = false;
+          docjsons[index]['allTime'] = docjsons[index]['allTime'] + difference;
+          docjsons = docjsons.map((d)=>jsonEncode(d)).toList();
+          transaction.update(ref, {'projects': docjsons});
+        }
+      });
     });
   }
 
