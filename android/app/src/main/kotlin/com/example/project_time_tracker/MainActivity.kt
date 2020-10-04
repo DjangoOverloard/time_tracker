@@ -1,4 +1,4 @@
-package com.example.project_time_tracker
+package com.example.stattrek
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

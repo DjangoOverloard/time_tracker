@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project_time_tracker/authorization.dart';
-import 'package:project_time_tracker/projectWid.dart';
+import 'package:stattrek/authorization.dart';
+import 'package:stattrek/projectWid.dart';
 
 DocumentSnapshot userDoc;
   GlobalKey<ScaffoldState> scaff = new GlobalKey<ScaffoldState>();
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          title: Text('Project Managment'),
+          title: Text('Stattrek'),
         ),
         drawer: Drawer(
           child: SafeArea(

@@ -1,6 +1,6 @@
 {
-    "name": "project_time_tracker",
-    "short_name": "project_time_tracker",
+    "name": "stattrek",
+    "short_name": "stattrek",
     "start_url": ".",
     "display": "minimal-ui",
     "background_color": "#0175C2",

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:project_time_tracker/mainPage.dart';
+import 'package:stattrek/mainPage.dart';
 
 
 class Authorization extends StatefulWidget {

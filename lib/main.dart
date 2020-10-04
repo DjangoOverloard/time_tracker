@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project_time_tracker/authorization.dart';
-import 'package:project_time_tracker/mainPage.dart';
+import 'package:stattrek/authorization.dart';
+import 'package:stattrek/mainPage.dart';
 
 
 void main() => runApp(MyApp());
